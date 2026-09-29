@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0d1220">
+  <title>P2P Myjot</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=__V__">
+</head>
+<body>
+  <div id="banner" class="banner" hidden></div>
+
+  <main id="app">
+    <!-- ГЛАВНАЯ -->
+    <section class="page active" id="page-home">
+      <header class="greet">
+        <h1 id="home-hello">👋 Привет!</h1>
+        <p>P2P Myjot</p>
+      </header>
+
+      <h2 class="section-title">Твоя статистика</h2>
+      <div class="hero">
+        <span class="hero-label">💰 Прибыль</span>
+        <div class="hero-num" id="home-profit"><span class="cur">₽</span> 0</div>
+      </div>
+      <div class="tiles three">
+        <div class="tile"><span class="tile-label">📊 Сделок</span><b id="home-deals">0</b></div>
+        <div class="tile"><span class="tile-label">🖼 NFT</span><b id="home-nft">0</b></div>
+        <div class="tile"><span class="tile-label">🔄 Обменов</span><b id="home-ex">0</b></div>
+      </div>
+
+      <h2 class="section-title">Быстрые действия</h2>
+      <div class="actions">
+        <button class="action" data-go="p2p"><span class="ico">➕</span>Новая P2P сделка</button>
+        <button class="action" data-go="nft"><span class="ico">🖼</span>Добавить NFT</button>
+        <button class="action" data-go="guarantee"><span class="ico">🛡</span>Гарант сделки</button>
+        <button class="action" data-go="exchange"><span class="ico">🔄</span>Рассчитать обмен</button>
+      </div>
+    </section>
+
+    <!-- P2P -->
+    <section class="page" id="page-p2p">
+      <h1 class="page-title">💰 P2P сделка</h1>
+      <div class="card form">
+        <div class="field">
+          <label for="p2p-buy">Сумма покупки</label>
+          <div class="combo"><input id="p2p-buy" inputmode="decimal" autocomplete="off" placeholder="0"><select id="p2p-buy-cur" data-cur="all" aria-label="Валюта покупки"></select></div>
+        </div>
+        <div class="field">
+          <label for="p2p-sell">Сумма продажи</label>
+          <div class="combo"><input id="p2p-sell" inputmode="decimal" autocomplete="off" placeholder="0"><select id="p2p-sell-cur" data-cur="all" aria-label="Валюта продажи"></select></div>
+        </div>
+        <div class="field">
+          <label>Режим комиссии</label>
+          <div class="seg" id="p2p-mode">
+            <button data-v="percent" class="on">Процент, %</button>
+            <button data-v="fixed">Фиксированная сумма</button>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="p2p-buyfee">Комиссия покупки <em class="unit" data-unit="buy">%</em></label><input id="p2p-buyfee" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+          <div class="field"><label for="p2p-sellfee">Комиссия продажи <em class="unit" data-unit="sell">%</em></label><input id="p2p-sellfee" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+        </div>
+        <div class="field"><label for="p2p-extra">Дополнительная комиссия <em class="unit" data-unit="sell">%</em></label><input id="p2p-extra" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+      </div>
+      <div id="p2p-result" class="result empty">Введите суммы — результат появится здесь</div>
+      <button class="btn primary block" id="p2p-save">Сохранить в историю</button>
+    </section>
+
+    <!-- NFT -->
+    <section class="page" id="page-nft">
+      <h1 class="page-title">🖼 NFT</h1>
+      <div class="card form">
+        <div class="field"><label for="nft-name">Название NFT</label><input id="nft-name" maxlength="200" autocomplete="off" placeholder="Например, Plush Pepe #123"></div>
+        <div class="field"><label for="nft-link">Ссылка на NFT</label><input id="nft-link" type="url" inputmode="url" autocomplete="off" placeholder="https://t.me/nft/…"></div>
+        <div class="field">
+          <label for="nft-buy">Цена покупки</label>
+          <div class="combo"><input id="nft-buy" inputmode="decimal" autocomplete="off" placeholder="0"><select id="nft-buy-cur" data-cur="nft" aria-label="Валюта покупки"></select></div>
+        </div>
+        <div class="field">
+          <label for="nft-sell">Цена продажи</label>
+          <div class="combo"><input id="nft-sell" inputmode="decimal" autocomplete="off" placeholder="0"><select id="nft-sell-cur" data-cur="nft" aria-label="Валюта продажи"></select></div>
+        </div>
+      </div>
+      <button class="btn primary block" id="nft-save">Сохранить NFT</button>
+      <div id="nft-result"></div>
+      <h2 class="section-title">История NFT</h2>
+      <div id="nft-list" class="list"></div>
+    </section>
+
+    <!-- ГАРАНТ -->
+    <section class="page" id="page-guarantee">
+      <h1 class="page-title">🛡 Гарант сделки</h1>
+      <div class="card form">
+        <div class="field">
+          <label for="g-amount">Сумма</label>
+          <div class="combo"><input id="g-amount" inputmode="decimal" autocomplete="off" placeholder="100000"><select id="g-cur" data-cur="all" aria-label="Валюта"></select></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="g-profit">Процент прибыли, %</label><input id="g-profit" inputmode="decimal" autocomplete="off" placeholder="5"></div>
+          <div class="field"><label for="g-fee">Комиссия гаранта, %</label><input id="g-fee" inputmode="decimal" autocomplete="off" placeholder="1"></div>
+        </div>
+        <div class="field">
+          <label>Как учитывать комиссию</label>
+          <div class="seg stack" id="g-mode">
+            <button data-v="included" class="on">Комиссия включена в сумму</button>
+            <button data-v="on_top">Комиссия добавляется сверху</button>
+          </div>
+        </div>
+      </div>
+      <div id="g-result" class="result empty">Введите сумму — результат появится здесь</div>
+      <button class="btn primary block" id="g-save">Сохранить в историю</button>
+      <h2 class="section-title">Последние гарант-сделки</h2>
+      <div id="g-list" class="list"></div>
+    </section>
+
+    <!-- ОБМЕН -->
+    <section class="page" id="page-exchange">
+      <h1 class="page-title">🔄 Обмен</h1>
+      <div class="card form">
+        <div class="field">
+          <label>Сервис</label>
+          <div class="chips wrap" id="ex-service">
+            <button data-v="Send" class="on">Send</button>
+            <button data-v="xRocket">xRocket</button>
+            <button data-v="Другой обменник">Другой обменник</button>
+            <button data-v="Своя комиссия">Своя комиссия</button>
+          </div>
+        </div>
+        <div class="field"><label for="ex-pair">Пара</label><select id="ex-pair" class="solo"></select></div>
+        <div class="field"><label for="ex-amount">Сумма <em class="unit" id="ex-from-unit"></em></label><input id="ex-amount" inputmode="decimal" autocomplete="off" placeholder="0"></div>
+        <div class="field"><label for="ex-rate">Курс <em class="unit" id="ex-rate-unit"></em></label><input id="ex-rate" inputmode="decimal" autocomplete="off" placeholder="Авто"></div>
+        <div class="field" id="ex-feekind-wrap">
+          <label>Комиссия</label>
+          <div class="seg" id="ex-feekind">
+            <button data-v="auto" class="on">Автоматическая</button>
+            <button data-v="custom">Своя</button>
+          </div>
+        </div>
+        <div class="field" id="ex-fee-wrap"><label for="ex-fee">Комиссия, %</label><input id="ex-fee" inputmode="decimal" autocomplete="off" placeholder="0"><small id="ex-fee-hint" class="hint"></small></div>
+        <div class="field">
+          <label>Режим комиссии</label>
+          <div class="seg" id="ex-mode">
+            <button data-v="included">Включена</button>
+            <button data-v="deducted" class="on">Вычитается</button>
+            <button data-v="added">Добавляется</button>
+          </div>
+        </div>
+      </div>
+      <div id="ex-result" class="result empty">Введите сумму — результат появится здесь</div>
+      <button class="btn primary block" id="ex-save">Сохранить в историю</button>
+      <h2 class="section-title">Последние обмены</h2>
+      <div id="ex-list" class="list"></div>
+    </section>
+
+    <!-- КУРСЫ -->
+    <section class="page" id="page-rates">
+      <h1 class="page-title">📈 Курсы</h1>
+      <div id="rates-warning" class="notice" hidden>⚠️ Не удалось обновить курс</div>
+      <div id="rates-list" class="list"></div>
+      <p class="muted small" id="rates-updated"></p>
+      <button class="btn ghost block" id="rates-refresh">Обновить курсы</button>
+    </section>
+
+    <!-- СТАТИСТИКА -->
+    <section class="page" id="page-stats">
+      <h1 class="page-title">📊 Статистика</h1>
+      <div class="tiles two" id="stats-tiles"></div>
+      <h2 class="section-title">Разбивка</h2>
+      <div class="card" id="stats-breakdown"></div>
+      <h2 class="section-title">Графики</h2>
+      <div class="card">
+        <div class="seg small" id="chart-period">
+          <button data-v="daily" class="on">По дням</button>
+          <button data-v="weekly">По неделям</button>
+        </div>
+        <div class="chips" id="chart-metric">
+          <button data-v="profit" class="on">Прибыль</button>
+          <button data-v="turnover">Оборот</button>
+          <button data-v="count">Количество сделок</button>
+        </div>
+        <div id="chart" class="chart"></div>
+      </div>
+    </section>
+
+    <!-- ИСТОРИЯ -->
+    <section class="page" id="page-history">
+      <h1 class="page-title">📜 История</h1>
+      <div class="chips" id="hist-type">
+        <button data-v="all" class="on">Все</button>
+        <button data-v="p2p">P2P</button>
+        <button data-v="nft">NFT</button>
+        <button data-v="guarantee">Гарант</button>
+        <button data-v="exchange">Обмен</button>
+      </div>
+      <div class="chips" id="hist-period">
+        <button data-v="today">Сегодня</button>
+        <button data-v="7d">7 дней</button>
+        <button data-v="30d">30 дней</button>
+        <button data-v="all" class="on">Всё время</button>
+      </div>
+      <div id="hist-list" class="list"></div>
+    </section>
+
+    <!-- ПРОФИЛЬ -->
+    <section class="page" id="page-profile">
+      <h1 class="page-title">⚙️ Профиль</h1>
+      <div class="card profile">
+        <div class="avatar" id="pf-avatar">?</div>
+        <div><b id="pf-name">Гость</b><div class="muted" id="pf-user"></div><div class="muted small" id="pf-id"></div></div>
+      </div>
+      <h2 class="section-title">Данные</h2>
+      <div class="card">
+        <p class="muted small">Все расчёты и история хранятся на сервере и видны только вам. Суммы в статистике пересчитаны в рубли по курсу на момент операции.</p>
+        <button class="btn danger block" id="pf-clear">Очистить всю историю</button>
+      </div>
+    </section>
+  </main>
+
+  <nav id="nav" aria-label="Разделы">
+    <button data-page="home" class="on"><span>🏠</span>Главная</button>
+    <button data-page="p2p"><span>💰</span>P2P</button>
+    <button data-page="nft"><span>🖼</span>NFT</button>
+    <button data-page="guarantee"><span>🛡</span>Гарант</button>
+    <button data-page="exchange"><span>🔄</span>Обмен</button>
+    <button data-page="rates"><span>📈</span>Курсы</button>
+    <button data-page="stats"><span>📊</span>Статистика</button>
+    <button data-page="history"><span>📜</span>История</button>
+    <button data-page="profile"><span>⚙️</span>Профиль</button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js?v=__V__"></script>
+</body>
+</html>
